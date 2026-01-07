@@ -142,6 +142,13 @@
     width: 100% !important;
     height: 100% !important;
   }
+  #board{ touch-action:none; } /* importantissimo per pinch-zoom su mobile */
+
+  #world{
+      position:absolute;
+      inset:0;
+      transform-origin: 0 0;
+  }
 
   svg {
     overflow: visible !important;
@@ -194,6 +201,7 @@
   // ---------- elementi ----------
   var board = document.getElementById("board");
   var svg = document.getElementById("wires");
+  var world = document.getElementById("world");
   var statusEl = document.getElementById("status");
 
   var btnNew = document.getElementById("btnNew");
@@ -217,15 +225,37 @@
   var selectedLinkId = null;
   var linkingFrom = null;
   var moveMode = false;
+    // ---------- camera (pan/zoom) ----------
+  var camX = 0;
+  var camY = 0;
+  var camS = 1;
+
+  function applyCamera(){
+    world.style.transform = "translate(" + camX + "px," + camY + "px) scale(" + camS + ")";
+  }
+  applyCamera();
+
+  function screenToWorld(clientX, clientY){
+    var r = boardRect();
+    return {
+      x: (clientX - r.left - camX) / camS,
+      y: (clientY - r.top  - camY) / camS
+    };
+  }
 
   function clampToBoard(x, y) {
     var r = boardRect();
-    var maxX = r.width - 260;
-    var maxY = r.height - 160;
+    var w = r.width  / camS;
+    var h = r.height / camS;
+
+    var maxX = w - 260;
+    var maxY = h - 160;
+
     if (x < 8) x = 8;
     if (y < 8) y = 8;
     if (x > maxX) x = maxX;
     if (y > maxY) y = maxY;
+
     return { x:x, y:y };
   }
 
@@ -347,16 +377,23 @@
     setStatus("Nessuna selezione.");
   }
 
-  function getPopBoxInBoardCoords(id) {
+    function getPopBoxInBoardCoords(id) {
     var el = document.querySelector('.pop[data-id="'+id+'"]');
     if (!el) return null;
+
     var r = el.getBoundingClientRect();
     var br = boardRect();
-    var x = r.left - br.left;
-    var y = r.top  - br.top;
+
+    // convertiamo da coordinate schermo a coordinate world (prima della transform)
+    var x = (r.left - br.left - camX) / camS;
+    var y = (r.top  - br.top  - camY) / camS;
+
+    var w = r.width  / camS;
+    var h = r.height / camS;
+
     return {
-      cx: x + r.width/2, cy: y + r.height/2,
-      hw: r.width/2, hh: r.height/2
+      cx: x + w/2, cy: y + h/2,
+      hw: w/2, hh: h/2
     };
   }
 
@@ -501,7 +538,7 @@
   }
 
   function render() {
-    var old = board.querySelectorAll(".pop");
+    var old = world.querySelectorAll(".pop");
     for (var i=0;i<old.length;i++) old[i].remove();
 
     var ghost = board.querySelector(".ghost");
@@ -576,8 +613,8 @@
 
          function onMove(ev) {
            if (!dragging) return;
-           var dx = ev.clientX - sx;
-           var dy = ev.clientY - sy;
+           var dx = (ev.clientX - sx) / camS;
+           var dy = (ev.clientY - sy) / camS;
            var pos = clampToBoard(ox + dx, oy + dy);
            p.x = pos.x; p.y = pos.y;
            el.style.left = p.x + "px";
@@ -595,7 +632,7 @@
           window.addEventListener("pointerup", onUp, { passive:true });
 });
 
-      board.appendChild(el);
+            world.appendChild(el);
     });
 
     renderLinks();
@@ -700,6 +737,88 @@ function parseImportedText(text) {
   }
 
   // ---------- eventi ----------
+  // ---------- PAN + PINCH ZOOM (mobile) ----------
+  var pointers = new Map();
+  var pinchStartDist = 0;
+  var pinchStartS = 1;
+  var pinchStartMid = null;
+  var panStart = null;
+
+  function dist(a,b){
+    var dx = a.x - b.x, dy = a.y - b.y;
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+  function mid(a,b){
+    return { x:(a.x+b.x)/2, y:(a.y+b.y)/2 };
+  }
+
+  board.addEventListener("pointerdown", function(e){
+    // solo sfondo (non un box)
+    if (e.target && e.target.closest && e.target.closest(".pop")) return;
+
+    pointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
+    board.setPointerCapture(e.pointerId);
+
+    if (pointers.size === 1) {
+      panStart = { x:e.clientX, y:e.clientY, camX:camX, camY:camY };
+    } else if (pointers.size === 2) {
+      var arr = Array.from(pointers.values());
+      pinchStartDist = dist(arr[0], arr[1]);
+      pinchStartS = camS;
+      pinchStartMid = mid(arr[0], arr[1]);
+    }
+  }, { passive:false });
+
+  board.addEventListener("pointermove", function(e){
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
+
+    if (pointers.size === 1 && panStart) {
+      var p = Array.from(pointers.values())[0];
+      camX = panStart.camX + (p.x - panStart.x);
+      camY = panStart.camY + (p.y - panStart.y);
+      applyCamera();
+      renderLinks();
+    }
+
+    if (pointers.size === 2) {
+      var arr = Array.from(pointers.values());
+      var d = dist(arr[0], arr[1]);
+      if (!pinchStartDist) return;
+
+      var newS = pinchStartS * (d / pinchStartDist);
+      if (newS < 0.5) newS = 0.5;
+      if (newS > 2.5) newS = 2.5;
+
+      // mantieni il punto medio sotto le dita
+      var m = mid(arr[0], arr[1]);
+
+      // coord mondo del mid prima del cambio scala
+      var w0 = screenToWorld(pinchStartMid.x, pinchStartMid.y);
+
+      camS = newS;
+
+      var r = boardRect();
+      camX = m.x - r.left - (w0.x * camS);
+      camY = m.y - r.top  - (w0.y * camS);
+
+      applyCamera();
+      renderLinks();
+    }
+  }, { passive:false });
+
+  board.addEventListener("pointerup", function(e){
+    pointers.delete(e.pointerId);
+    if (pointers.size < 2) pinchStartDist = 0;
+    if (pointers.size === 0) panStart = null;
+  }, { passive:true });
+
+  board.addEventListener("pointercancel", function(e){
+    pointers.delete(e.pointerId);
+    if (pointers.size < 2) pinchStartDist = 0;
+    if (pointers.size === 0) panStart = null;
+  }, { passive:true });
+
   board.addEventListener("mousedown", function (e) {
     if (e.target === board) {
       clearSelections();
@@ -710,8 +829,8 @@ function parseImportedText(text) {
 
   board.addEventListener("dblclick", function (e) {
     if (e.target && e.target.closest && e.target.closest(".pop")) return;
-    var br = boardRect();
-    var pos = clampToBoard(e.clientX - br.left, e.clientY - br.top);
+    var w = screenToWorld(e.clientX, e.clientY);
+    var pos = clampToBoard(w.x, w.y);
     createPop(pos.x, pos.y);
   });
 
