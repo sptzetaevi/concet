@@ -53,9 +53,11 @@
 
     /* contenitore trasformabile (pan/zoom) */
     #world{
-      position:absolute;
-      inset:0;
-      transform-origin: 0 0;
+     position:absolute;
+     left:0; top:0;
+     width:8000px;
+     height:8000px;
+     transform-origin: 0 0;
     }
 
     /* SVG: non blocca click su box */
@@ -253,20 +255,11 @@
   }
 
   function clampToBoard(x, y) {
-    var r = boardRect();
-    var w = r.width  / camS;
-    var h = r.height / camS;
-
-    var maxX = w - 260;
-    var maxY = h - 160;
-
-    if (x < 8) x = 8;
-    if (y < 8) y = 8;
-    if (x > maxX) x = maxX;
-    if (y > maxY) y = maxY;
-
-    return { x:x, y:y };
-  }
+  // “spazio infinito”: non blocco a destra/in basso
+  if (x < 8) x = 8;
+  if (y < 8) y = 8;
+  return { x:x, y:y };
+}
 
   function clearSelections() {
     selectedBoxId = null;
@@ -856,9 +849,13 @@ function parseImportedText(text) {
 
   // ---------- bottoni ----------
   btnNew.addEventListener("click", function () {
-    var r = boardRect();
-    createPop(20 + Math.random()*(r.width-260), 20 + Math.random()*(r.height-160));
-  });
+  var r = boardRect();
+  var cx = r.left + r.width/2;
+  var cy = r.top  + r.height/2;
+  var w = screenToWorld(cx, cy);
+  createPop(w.x, w.y);
+});
+  
   btnLink.addEventListener("click", function () { setLinkMode(!linkingFrom); });
   btnDelete.addEventListener("click", deleteSelected);
   btnMove.addEventListener("click", function () { setMoveMode(!moveMode); });
