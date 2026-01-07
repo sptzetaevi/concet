@@ -48,6 +48,15 @@
         repeating-linear-gradient(0deg, transparent, transparent 23px, var(--grid) 24px),
         repeating-linear-gradient(90deg, transparent, transparent 23px, var(--grid) 24px);
     }
+        /* MOBILE: evita che il pinch faccia zoom della pagina */
+    #board{ touch-action:none; }
+
+    /* contenitore trasformabile (pan/zoom) */
+    #world{
+      position:absolute;
+      inset:0;
+      transform-origin: 0 0;
+    }
 
     /* SVG: non blocca click su box */
     svg{
@@ -787,8 +796,8 @@ function parseImportedText(text) {
       if (!pinchStartDist) return;
 
       var newS = pinchStartS * (d / pinchStartDist);
-      if (newS < 0.5) newS = 0.5;
-      if (newS > 2.5) newS = 2.5;
+      if (newS < 0.25) newS = 0.25;
+      if (newS > 4.0) newS = 4.0;
 
       // mantieni il punto medio sotto le dita
       var m = mid(arr[0], arr[1]);
