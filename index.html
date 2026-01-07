@@ -40,7 +40,18 @@
       padding:1px 6px; border-radius:6px; background:#fafafa;
     }
     .status{ margin-left:auto; font-size:13px; opacity:.9; white-space:nowrap; }
-
+    
+    .focalQuestionTa{
+  width:260px;
+  height:62px;
+  resize:vertical;
+  font-size:13px;
+  padding:8px;
+  border:1px solid rgba(0,0,0,.18);
+  border-radius:10px;
+  background:#fff;
+  box-sizing:border-box;
+}
     #board{
       position:relative; overflow:hidden;
       background:
@@ -181,6 +192,7 @@
 <div id="app">
     
   <header>
+    <textarea id="focalQuestion" class="focalQuestionTa" placeholder="Domanda focale..."></textarea>
     <button class="btn" id="btnNew">+ Nuovo pop</button>
     <button class="btn" id="btnMove">Sposta</button>
     <button class="btn" id="btnLink">Collega</button>
@@ -214,6 +226,8 @@
   var svg = document.getElementById("wires");
   var world = document.getElementById("world");
   var statusEl = document.getElementById("status");
+      // --- DOM domanda focale ---
+  var focalTa = document.getElementById("focalQuestion");
 
   var btnNew = document.getElementById("btnNew");
   var btnLink = document.getElementById("btnLink");
@@ -236,6 +250,16 @@
   var selectedLinkId = null;
   var linkingFrom = null;
   var moveMode = false;
+    // --- domanda focale (testo) ---
+  var focalQuestion = "";
+
+  function askFocalQuestionAtStart(){
+    var q = prompt("Qual è la domanda focale a cui questa mappa prova a rispondere?", "");
+    if (q === null) q = "";            // se annulla, lasciamo vuoto
+    focalQuestion = (q || "").trim();
+    if (focalTa) focalTa.value = focalQuestion;
+  }
+
     // ---------- camera (pan/zoom) ----------
   var camX = 0;
   var camY = 0;
@@ -866,7 +890,13 @@ function parseImportedText(text) {
   btnImport.addEventListener("click", doImport);
 
   // ---------- init ----------
+  askFocalQuestionAtStart();
   render();
+    if (focalTa) {
+    focalTa.addEventListener("input", function(){
+      focalQuestion = this.value;
+    });
+  }
   setStatus("Pronto");
 })();
 </script>
