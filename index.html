@@ -44,7 +44,7 @@
   display:none;
 }
     
-    .focalQuestionTa{
+  .focalQuestionTa{
   width:260px;
   height:62px;
   resize:vertical;
@@ -55,6 +55,19 @@
   background:#fff;
   box-sizing:border-box;
 }
+    #focalFooter{
+  background:#fff;
+  border-top:1px solid rgba(0,0,0,.08);
+  padding:10px 12px;
+  display:flex;
+  justify-content:flex-start;
+  gap:10px;
+}
+#focalFooterTa{
+  width: 100%;
+  max-width: 900px;
+}
+
     #board{
       position:relative; overflow:hidden;
       background:
@@ -139,33 +152,43 @@
       font-size:14px; opacity:.55;
     }
 
-   @media print {
+@media print {
   header { display:none !important; }
   .ghost { display:none !important; }
 
-  html, body { height: 100% !important; }
-  #app { height: 100% !important; }
+  /* stampa con sfondo bianco e senza tagli strani */
+  html, body { height:auto !important; }
+  #app { height:auto !important; }
 
-  #board {
+  #board{
     background:#fff !important;
     overflow: visible !important;
-    height: 100vh !important;
   }
-
   svg { overflow: visible !important; }
+  #wires { width:100% !important; height:100% !important; }
 
-  /* ✅ SOLO QUESTO VIENE STAMPATO */
-  #printFocal{
+  /* il footer deve essere stampato */
+  #focalFooter{
     display:block !important;
     position: fixed;
-    top: 10mm;
     left: 10mm;
     right: 10mm;
+    bottom: 10mm;
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+
+  /* la textarea in stampa deve sembrare testo “pulito” */
+  #focalFooterTa{
+    border: none !important;
+    resize: none !important;
+    height: auto !important;
     font-size: 14pt;
     font-weight: 700;
-    line-height: 1.3;
-    color:#000;
-    white-space: pre-wrap;
+    padding: 0;
+    background: transparent !important;
+    color: #000 !important;
   }
 }
 
@@ -239,9 +262,14 @@
     </span>
     <span class="status" id="status">Avvio...</span>
     <span id="mapTitle">MAPPA CONCETTUALE</span>
-  </header>
-  <div id="printFocal"></div>
-    <div id="board">
+ </header>
+
+<footer id="focalFooter">
+  <textarea id="focalFooterTa" class="focalQuestionTa" placeholder="Domanda focale..." readonly></textarea>
+</footer>
+
+<div id="board">
+
     <div id="world">
       <svg id="wires"></svg>
       <!-- i box .pop verranno inseriti qui dentro via JS -->
@@ -258,11 +286,11 @@
   var statusEl = document.getElementById("status");
       // --- DOM domanda focale ---
   var focalTa = document.getElementById("focalQuestion");
-  var printFocal = document.getElementById("printFocal");
-  function syncPrintFocal(){
-  if (!printFocal || !focalTa) return;
+  var focalFooterTa = document.getElementById("focalFooterTa");
+  function syncFooterFocal(){
+  if (!focalTa || !focalFooterTa) return;
   var v = (focalTa.value || "").trim();
-  printFocal.textContent = v ? ("Domanda focale: " + v) : "";
+  focalFooterTa.value = v ? ("Domanda focale: " + v) : "";
 }
 
   var btnNew = document.getElementById("btnNew");
@@ -294,7 +322,7 @@
     if (q === null) q = "";            // se annulla, lasciamo vuoto
     focalQuestion = (q || "").trim();
     if (focalTa) focalTa.value = focalQuestion;
-    syncPrintFocal();
+    syncFooterFocal();
   }
 
     // ---------- camera (pan/zoom) ----------
@@ -930,7 +958,7 @@ function parseImportedText(text) {
    if (focalTa) {
   focalTa.addEventListener("input", function(){
     focalQuestion = this.value;
-    syncPrintFocal();
+    syncFooterFocal();
   });
 }
   
@@ -941,6 +969,7 @@ function parseImportedText(text) {
     syncPrintFocal();
     });
   }
+  askFocalQuestionAtStart();
   setStatus("Pronto");
 })();
 </script>
