@@ -139,22 +139,35 @@
       font-size:14px; opacity:.55;
     }
 
-    @media print {
+   @media print {
   header { display:none !important; }
   .ghost { display:none !important; }
 
-  /* Mantieni un'altezza reale al layout in stampa */
   html, body { height: 100% !important; }
   #app { height: 100% !important; }
 
-  /* Il board deve avere dimensioni stampabili */
-      #board{ touch-action:none; } /* importantissimo per pinch-zoom su mobile */
+  #board {
+    background:#fff !important;
+    overflow: visible !important;
+    height: 100vh !important;
+  }
 
-    #world{
-      position:absolute;
-      inset:0;
-      transform-origin: 0 0;
-    }
+  svg { overflow: visible !important; }
+
+  /* ✅ SOLO QUESTO VIENE STAMPATO */
+  #printFocal{
+    display:block !important;
+    position: fixed;
+    top: 10mm;
+    left: 10mm;
+    right: 10mm;
+    font-size: 14pt;
+    font-weight: 700;
+    line-height: 1.3;
+    color:#000;
+    white-space: pre-wrap;
+  }
+}
 
   #board {
     background:#fff !important;
@@ -193,42 +206,6 @@
   }
 }
     /* mostra la domanda focale */
-  .focalQuestionTa{
-    display: block !important;
-    position: fixed;
-    top: 10mm;
-    left: 10mm;
-    width: calc(100% - 20mm);
-    border: none !important;
-    background: transparent !important;
-    font-size: 14pt;
-    font-weight: 600;
-  }
-
-  @media print {
-
-  /* mostra la domanda focale anche se l'header è nascosto */
-  .focalQuestionTa{
-    display: block !important;
-    position: fixed;
-    top: 10mm;
-    left: 10mm;
-    width: calc(100% - 20mm);
-    height: auto;
-    min-height: 20mm;
-
-    border: none !important;
-    outline: none !important;
-    resize: none !important;
-
-    font-size: 14pt;
-    font-weight: 600;
-    line-height: 1.3;
-    background: transparent !important;
-    color: #000;
-    white-space: pre-wrap;
-  }
-}
 
    #mapTitle {
      margin-left: auto;   /* lo spinge a destra nel header */
@@ -950,16 +927,13 @@ function parseImportedText(text) {
   btnImport.addEventListener("click", doImport);
 
   // ---------- init ----------
-  askFocalQuestionAtStart();
-  if (focalTa) {
-  focalTa.addEventListener("input", function () {
-    if (this.value.trim() === "") {
-      this.setAttribute("data-empty", "1");
-    } else {
-      this.removeAttribute("data-empty");
-    }
+   if (focalTa) {
+  focalTa.addEventListener("input", function(){
+    focalQuestion = this.value;
+    syncPrintFocal();
   });
 }
+  
   render();
     if (focalTa) {
     focalTa.addEventListener("input", function(){
