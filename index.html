@@ -1,108 +1,146 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>mappificio</title>
+  <meta charset="utf-8">
+  <title>MAPPA MENTALE</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <style>
-    :root { --bg:#f6f7fb; --grid:rgba(0,0,0,.06); --ink:#1a1a1a; }
-
-    html, body { height:100%; margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; color:var(--ink); }
-    #app { height:100%; display:grid; grid-template-rows:auto 1fr; }
-
-    header{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:10px 12px;
-      background:#fff; border-bottom:1px solid rgba(0,0,0,.08);
-      position:sticky; top:0; z-index:10;
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color: transparent;
     }
-    .btn{
-      border:1px solid rgba(0,0,0,.18);
-      background:#fff;
-      border-radius:10px;
-      padding:7px 10px;
+    html,body{
+      margin:0;
+      padding:0;
+      height:100%;
+      overflow:hidden;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:#f1f2f5;
+    }
+    body{
+      display:flex;
+      flex-direction:column;
+    }
+    header{
+      flex:0 0 auto;
+      padding:8px 10px 6px 10px;
+      background:#ffffff;
+      border-bottom:1px solid rgba(0,0,0,.08);
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-size:14px;
+      position:relative;
+      z-index:10;
+    }
+    header .group{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      margin-right:6px;
+    }
+    header .spacer{
+      flex:1 1 auto;
+    }
+    header button{
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,.12);
+      background:#ffffff;
+      padding:5px 10px;
       cursor:pointer;
       font-size:13px;
-      user-select:none;
-      white-space:nowrap;
+      line-height:1;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      box-shadow:0 1px 2px rgba(0,0,0,.04);
     }
-    .btn:hover{ background:#f7f7f7; }
-    .btn.active{
-      border-color: rgba(0,120,255,.55);
-      box-shadow: 0 0 0 3px rgba(0,120,255,.18);
+    header button.small{
+      padding:3px 7px;
+      font-size:12px;
     }
-    .btn.danger{ border-color: rgba(200,0,0,.28); }
-    .btn.danger:hover{ background: rgba(200,0,0,.06); }
-
-    .hint{ font-size:13px; opacity:.75; flex: 1 1 520px; }
-    kbd{
-      font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-      font-size:12px; border:1px solid rgba(0,0,0,.2); border-bottom-width:2px;
-      padding:1px 6px; border-radius:6px; background:#fafafa;
+    header button:hover{
+      background:#f3f4f6;
     }
-    .status{ margin-left:auto; font-size:13px; opacity:.9; white-space:nowrap; }
-   #printFocal{
-  display:none;
-}
-    
-  .focalQuestionTa{
-  width:260px;
-  height:62px;
-  resize:vertical;
-  font-size:13px;
-  padding:8px;
-  border:1px solid rgba(0,0,0,.18);
-  border-radius:10px;
-  background:#fff;
-  box-sizing:border-box;
-}
-    #focalFooter{
-  background:#fff;
-  border-top:1px solid rgba(0,0,0,.08);
-  padding:10px 12px;
-  display:flex;
-  justify-content:flex-start;
-  gap:10px;
-}
-#focalFooterTa{
-  width: 100%;
-  max-width: 900px;
-}
-
-    #board{
-      position:relative; overflow:hidden;
-      background:
-        linear-gradient(var(--bg), var(--bg)),
-        repeating-linear-gradient(0deg, transparent, transparent 23px, var(--grid) 24px),
-        repeating-linear-gradient(90deg, transparent, transparent 23px, var(--grid) 24px);
+    header button:active{
+      transform:translateY(1px);
+      box-shadow:none;
     }
-        /* MOBILE: evita che il pinch faccia zoom della pagina */
-    #board{ touch-action:none; }
-
-    /* contenitore trasformabile (pan/zoom) */
-    #world{
-     position:absolute;
-     left:0; top:0;
-     width:8000px;
-     height:8000px;
-     transform-origin: 0 0;
+    header button.active{
+      background:#e0f2ff;
+      border-color:#3b82f6;
     }
-
-    /* SVG: non blocca click su box */
-    svg{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      pointer-events:auto;
+    header .label{
+      font-weight:500;
+      margin-right:4px;
+    }
+    header .status{
+      font-size:12px;
+      color:#555;
+      padding:4px 8px;
+      border-radius:999px;
+      background:#f3f4f6;
+    }
+    header select,
+    header input[type="color"]{
+      font-size:13px;
+      padding:4px 6px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,.18);
+      background:#ffffff;
+    }
+    header input[type="color"]{
+      width:34px;
+      height:22px;
+      padding:0;
+    }
+    header .title{
+      font-weight:700;
+      letter-spacing:0.12em;
+      font-size:18px;
+      margin-right:8px;
+    }
+    header .logoCircle{
+      width:32px;
+      height:32px;
+      border-radius:999px;
+      border:2px solid #000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+      margin-left:8px;
+    }
+    main{
+      flex:1 1 auto;
+      position:relative;
+      overflow:hidden;
+    }
+    .board{
+      position:absolute;
+      inset:0;
+      background:#f1f2f5;
+      overflow:hidden;
+      touch-action:none;
+    }
+    .viewport{
+      position:absolute;
+      left:0;
+      top:0;
+      width:100%;
+      height:100%;
+      transform-origin:0 0;
     }
 
     .pop{
       position:absolute;
-      width:20ch;
-      max-width:48ch;
-      background:#fff;
-      border:1px solid rgba(0,0,0,.55);
-      border-radius:14px;
-      box-shadow:0 8px 24px rgba(0,0,0,.10);
-      padding:10px;
+      min-width:120px;
+      max-width:360px;
+      padding:8px 14px;
+      border-radius:999px;
+      background:#ffffff;
+      border:2px solid #000000;
+      box-shadow:0 4px 12px rgba(0,0,0,.12);
       box-sizing:border-box;
       user-select:none;
       cursor:grab;
@@ -110,6 +148,7 @@
       align-items:center;
       justify-content:center;
       touch-action: none;
+      pointer-events:auto;
     }
     .pop:active{ cursor:grabbing; }
     .pop.selected{ outline:3px solid rgba(0,120,255,.25); }
@@ -136,255 +175,185 @@
 
     .linkLine{
       pointer-events:stroke;
+      fill: none;
       cursor:pointer;
       stroke: rgba(0,0,0,.55);
       stroke-width: 2;
       stroke-linecap: round;
     }
     .linkLine.selected{
-      stroke: rgba(0,120,255,.85);
-      stroke-width: 3;
+      stroke-width:3;
+      stroke:rgba(37,99,235,.9);
     }
 
-    .ghost{
-      position:absolute; inset:0; pointer-events:none;
-      display:flex; align-items:center; justify-content:center;
-      font-size:14px; opacity:.55;
+    .linkLabel{
+      font-size:11px;
+      padding:2px 6px;
+      border-radius:999px;
+      background:#f9fafb;
+      border:1px solid rgba(0,0,0,.12);
+      white-space:nowrap;
+      pointer-events:auto;
+      cursor:pointer;
     }
 
-@media print {
-  header { display:none !important; }
-  .ghost { display:none !important; }
-
-  /* stampa con sfondo bianco e senza tagli strani */
-  html, body { height:auto !important; }
-  #app { height:auto !important; }
-
-  #board{
-    background:#fff !important;
-    overflow: visible !important;
-  }
-  svg { overflow: visible !important; }
-  #wires { width:100% !important; height:100% !important; }
-
-  /* il footer deve essere stampato */
-  #focalFooter{
-    display:block !important;
-    position: fixed;
-    left: 10mm;
-    right: 10mm;
-    bottom: 10mm;
-    padding: 0;
-    border: none;
-    background: transparent;
-  }
-
-  /* la textarea in stampa deve sembrare testo “pulito” */
-  #focalFooterTa{
-    border: none !important;
-    resize: none !important;
-    height: auto !important;
-    font-size: 14pt;
-    font-weight: 700;
-    padding: 0;
-    background: transparent !important;
-    color: #000 !important;
-  }
-}
-
-  #board {
-    background:#fff !important;
-    overflow: visible !important;
-    height: 100vh !important;   /* <-- CHIAVE: altrimenti svg=0 */
-  }
-
-  /* SVG deve occupare tutto il board in stampa */
-  #wires {
-    width: 100% !important;
-    height: 100% !important;
-  }
-  #board{ touch-action:none; } /* importantissimo per pinch-zoom su mobile */
-
-  #world{
+    .zoomButtons{
       position:absolute;
-      inset:0;
-      transform-origin: 0 0;
-  }
+      right:10px;
+      bottom:10px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      z-index:5;
+    }
+    .zoomButtons button{
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,.18);
+      background:#ffffff;
+      width:34px;
+      height:34px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font-size:18px;
+      box-shadow:0 2px 6px rgba(0,0,0,.15);
+    }
+    .zoomButtons button:hover{
+      background:#f3f4f6;
+    }
 
-  svg {
-    overflow: visible !important;
-  }
- #printFocal{
-    display:block !important;
-    position: fixed;
-    top: 10mm;
-    left: 10mm;
-    right: 10mm;
-
-    font-size: 14pt;
-    font-weight: 700;
-    line-height: 1.3;
-    color:#000;
-    white-space: pre-wrap;
-  }
-}
-    /* mostra la domanda focale */
-
-   #mapTitle {
-     margin-left: auto;   /* lo spinge a destra nel header */
-     font-size: 22px;     /* dimensione del testo */
-     font-weight: 800;    /* molto in grassetto */
-     letter-spacing: 2px;/* spazio tra le lettere */
-     user-select: none;  /* non selezionabile */
+    @media print{
+      header, .zoomButtons{
+        display:none!important;
+      }
+      body,html{
+        background:#ffffff;
+        height:auto;
+        overflow:visible;
+      }
+      .board{
+        position:relative;
+        width:100%;
+        height:auto;
+        overflow:visible;
+        background:#ffffff;
+      }
+      .viewport{
+        transform:none!important;
+        position:relative;
+      }
+      .pop{
+        box-shadow:none!important;
+        page-break-inside:avoid;
+      }
+      svg{
+        overflow:visible!important;
+      }
     }
 
   </style>
 </head>
-
 <body>
-<div id="app">
-    
-  <header>
-    <textarea id="focalQuestion" class="focalQuestionTa" placeholder="Domanda focale..."></textarea>
-    <button class="btn" id="btnNew">+ Nuovo pop</button>
-    <button class="btn" id="btnMove">Sposta</button>
-    <button class="btn" id="btnLink">Collega</button>
-    <button class="btn danger" id="btnDelete">Elimina</button>
+<header>
+  <button id="btnNew" type="button">+ Nuovo pop</button>
+  <button id="btnMove" type="button">Sposta</button>
+  <button id="btnLink" type="button">Collega</button>
+  <button id="btnDelete" type="button">Elimina</button>
 
-    <button class="btn" id="btnPdf">Esporta PDF</button>
-    <button class="btn" id="btnExportJson">Esporta JSON</button>
-    <button class="btn" id="btnExportHtml">Esporta HTML</button>
-    <button class="btn" id="btnImport">Importa</button>
-    <input id="fileInput" type="file" accept=".json,.html" style="display:none" />
-
-    <span class="hint">
-      Doppio click = crea • Trascina = sposta • <kbd>L</kbd>/Collega = collega • click linea = seleziona • <kbd>CANC</kbd>/Elimina = elimina • <kbd>ESC</kbd> = annulla
-    </span>
-    <span class="status" id="status">Avvio...</span>
-    <span id="mapTitle">MAPPA CONCETTUALE</span>
- </header>
-
-<footer id="focalFooter">
-  <textarea id="focalFooterTa" class="focalQuestionTa" placeholder="Domanda focale..." readonly></textarea>
-</footer>
-
-<div id="board">
-
-    <div id="world">
-      <svg id="wires"></svg>
-      <!-- i box .pop verranno inseriti qui dentro via JS -->
-    </div>
-    <div class="ghost">Doppio click sullo sfondo per creare un pop</div>
+  <div class="group">
+    <button id="btnExportPdf" type="button">Stampa in PDF</button>
+    <button id="btnExportJson" type="button">Salva in JSON</button>
+    <button id="btnExportHtml" type="button">Salva HTML</button>
+    <button id="btnImport" type="button">Importa HTML/JSON</button>
   </div>
 
+  <div class="group">
+    <span class="label">Testo:</span>
+    <input id="colorPicker" type="color" value="#000000" title="Colore testo e bordi">
+    <button id="btnSmaller" type="button" class="small">A-</button>
+    <button id="btnBigger" type="button" class="small">A+</button>
+    <button id="btnBold" type="button" class="small">B</button>
+  </div>
+
+  <span id="status" class="status">Pronto</span>
+
+  <div class="spacer"></div>
+
+  <span class="title">MAPPA MENTALE</span>
+  <div class="logoCircle">A M</div>
+</header>
+
+<main>
+  <div id="board" class="board">
+    <div id="viewport" class="viewport"></div>
+    <svg id="wires" xmlns="http://www.w3.org/2000/svg" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;">
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#000"></polygon>
+        </marker>
+      </defs>
+    </svg>
+    <div class="zoomButtons">
+      <button id="zoomIn">+</button>
+      <button id="zoomOut">-</button>
+    </div>
+  </div>
+</main>
+
 <script>
-(function () {
-  // ---------- elementi ----------
-  var board = document.getElementById("board");
-  var svg = document.getElementById("wires");
-  var world = document.getElementById("world");
-  var statusEl = document.getElementById("status");
-      // --- DOM domanda focale ---
-  var focalTa = document.getElementById("focalQuestion");
-  var focalFooterTa = document.getElementById("focalFooterTa");
-  function syncFooterFocal(){
-  if (!focalTa || !focalFooterTa) return;
-  var v = (focalTa.value || "").trim();
-  focalFooterTa.value = v ? ("Domanda focale: " + v) : "";
-}
+(function(){
+  var board   = document.getElementById("board");
+  var viewport= document.getElementById("viewport");
+  var wires   = document.getElementById("wires");
 
-  var btnNew = document.getElementById("btnNew");
-  var btnLink = document.getElementById("btnLink");
-  var btnDelete = document.getElementById("btnDelete");
-  var btnPdf = document.getElementById("btnPdf");
-  var btnExportJson = document.getElementById("btnExportJson");
-  var btnExportHtml = document.getElementById("btnExportHtml");
-  var btnImport = document.getElementById("btnImport");
-  var btnMove = document.getElementById("btnMove");
-  var fileInput = document.getElementById("fileInput");
+  var btnNew      = document.getElementById("btnNew");
+  var btnMove     = document.getElementById("btnMove");
+  var btnLink     = document.getElementById("btnLink");
+  var btnDelete   = document.getElementById("btnDelete");
+  var btnExportPdf= document.getElementById("btnExportPdf");
+  var btnExportJson= document.getElementById("btnExportJson");
+  var btnExportHtml= document.getElementById("btnExportHtml");
+  var btnImport   = document.getElementById("btnImport");
 
-  function setStatus(msg){ statusEl.textContent = msg; }
-  function uid(){ return Math.random().toString(36).slice(2, 10); }
-  function boardRect(){ return board.getBoundingClientRect(); }
+  var colorPicker = document.getElementById("colorPicker");
+  var btnSmaller  = document.getElementById("btnSmaller");
+  var btnBigger   = document.getElementById("btnBigger");
+  var btnBold     = document.getElementById("btnBold");
 
-  // ---------- stato ----------
-  var pops = [];   // {id,x,y,text}
-  var links = [];  // {id,from,to}
+  var statusSpan  = document.getElementById("status");
+  var zoomInBtn   = document.getElementById("zoomIn");
+  var zoomOutBtn  = document.getElementById("zoomOut");
+
+  var pops = [];
+  var links = [];
+
   var selectedBoxId = null;
   var selectedLinkId = null;
-  var linkingFrom = null;
+
   var moveMode = false;
-    // --- domanda focale (testo) ---
-  var focalQuestion = "";
+  var linkingFrom = null;
 
-  function askFocalQuestionAtStart(){
-    var q = prompt("Qual è la domanda focale a cui questa mappa prova a rispondere?", "");
-    if (q === null) q = "";            // se annulla, lasciamo vuoto
-    focalQuestion = (q || "").trim();
-    if (focalTa) focalTa.value = focalQuestion;
-    syncFooterFocal();
+  var view = { x:0, y:0, s:1 };
+  var isPanning = false;
+  var panStart = { x:0, y:0 };
+  var panViewStart = { x:0, y:0 };
+
+  function uid(){
+    return "id" + Math.random().toString(36).slice(2,10);
   }
 
-    // ---------- camera (pan/zoom) ----------
-  var camX = 0;
-  var camY = 0;
-  var camS = 1;
-
-  function applyCamera(){
-    world.style.transform = "translate(" + camX + "px," + camY + "px) scale(" + camS + ")";
-  }
-  applyCamera();
-
-  function screenToWorld(clientX, clientY){
-    var r = boardRect();
-    return {
-      x: (clientX - r.left - camX) / camS,
-      y: (clientY - r.top  - camY) / camS
-    };
-  }
-
-  function clampToBoard(x, y) {
-  // “spazio infinito”: non blocco a destra/in basso
-  if (x < 8) x = 8;
-  if (y < 8) y = 8;
-  return { x:x, y:y };
-}
-
-  function clearSelections() {
-    selectedBoxId = null;
-    selectedLinkId = null;
-    var a = document.querySelectorAll(".pop");
-    for (var i=0;i<a.length;i++) a[i].classList.remove("selected");
-    var b = document.querySelectorAll(".linkLine");
-    for (var j=0;j<b.length;j++) b[j].classList.remove("selected");
-  }
-
-  function selectBox(id) {
-    selectedBoxId = id;
-    selectedLinkId = null;
-    var a = document.querySelectorAll(".pop");
-    for (var i=0;i<a.length;i++) {
-      a[i].classList.toggle("selected", a[i].dataset.id === id);
-    }
-    var b = document.querySelectorAll(".linkLine");
-    for (var j=0;j<b.length;j++) b[j].classList.remove("selected");
-  }
-
-  function selectLink(id) {
-    selectedLinkId = id;
-    selectedBoxId = null;
-    var a = document.querySelectorAll(".linkLine");
-    for (var i=0;i<a.length;i++) {
-      a[i].classList.toggle("selected", a[i].dataset.linkid === id);
-    }
-    var b = document.querySelectorAll(".pop");
-    for (var j=0;j<b.length;j++) b[j].classList.remove("selected");
+  function setStatus(t){
+    statusSpan.textContent = t;
   }
 
   function setLinkMode(on) {
     if (on) {
-      if (moveMode) setMoveMode(false);
-      if (!selectedBoxId) { setStatus("Seleziona un box prima di collegare."); return; }
+      if (!selectedBoxId) {
+        setStatus("Seleziona prima un box da cui partire.");
+        btnLink.classList.remove("active");
+        return;
+      }
       linkingFrom = selectedBoxId;
       btnLink.classList.add("active");
       var a = document.querySelectorAll(".pop");
@@ -392,6 +361,7 @@
         a[i].classList.toggle("linking", a[i].dataset.id === linkingFrom);
       }
       setStatus("Modalita collega: clicca un altro box.");
+      return;
     } else {
       linkingFrom = null;
       btnLink.classList.remove("active");
@@ -400,52 +370,93 @@
       setStatus("Pronto");
     }
   }
+
   function setMoveMode(on) {
-  moveMode = !!on;
-
-  if (moveMode) {
-    // se attivo sposta: disattivo collega
-    setLinkMode(false);
-    btnMove.classList.add("active");
-    setStatus("Modalita sposta: trascina i box.");
-  } else {
-    btnMove.classList.remove("active");
-    setStatus("Pronto");
+    moveMode = !!on;
+    if (moveMode) {
+      btnMove.classList.add("active");
+      setStatus("Modalita sposta (trascina sfondo).");
+    } else {
+      btnMove.classList.remove("active");
+      setStatus("Pronto");
+    }
   }
 
-  // quando sposta è attivo, blocchiamo l'editing del testo
-  var tas = document.querySelectorAll(".pop .body");
-  for (var i = 0; i < tas.length; i++) {
-    tas[i].readOnly = moveMode;
+  function clearSelection() {
+    selectedBoxId = null;
+    selectedLinkId = null;
+    var nodes = document.querySelectorAll(".pop");
+    for (var i=0; i<nodes.length; i++) nodes[i].classList.remove("selected");
+    var lines = wires.querySelectorAll(".linkLine");
+    for (var j=0;j<lines.length;j++) lines[j].classList.remove("selected");
+    updateTextControls();
   }
-}
-  
-  function autoGrow(ta) {
+
+  function selectBox(id) {
+    selectedBoxId = id;
+    selectedLinkId = null;
+    var nodes = document.querySelectorAll(".pop");
+    for (var i=0; i<nodes.length; i++) {
+      nodes[i].classList.toggle("selected", nodes[i].dataset.id === id);
+    }
+    var lines = wires.querySelectorAll(".linkLine");
+    for (var j=0;j<lines.length;j++) lines[j].classList.remove("selected");
+    setStatus("Box selezionato.");
+    updateTextControls();
+  }
+
+  function selectLink(id) {
+    selectedLinkId = id;
+    selectedBoxId = null;
+    var nodes = document.querySelectorAll(".pop");
+    for (var i=0; i<nodes.length; i++) {
+      nodes[i].classList.remove("selected");
+    }
+    var lines = wires.querySelectorAll(".linkLine");
+    for (var j=0;j<lines.length;j++) {
+      lines[j].classList.toggle("selected", lines[j].dataset.linkid === id);
+    }
+    setStatus("Collegamento selezionato.");
+    updateTextControls();
+  }
+
+  function autoGrow(ta, popRef) {
+    // reset altezza per misurare correttamente
     ta.style.height = "auto";
-    ta.style.height = ta.scrollHeight + "px";
+    var newH = ta.scrollHeight;
+
+    // memorizza l'altezza massima raggiunta dal box
+    if (popRef) {
+      if (!popRef._maxHeight || newH > popRef._maxHeight) {
+        popRef._maxHeight = newH;
+      }
+      newH = popRef._maxHeight;
+    }
+
+    ta.style.height = newH + "px";
+  }
+
+  function resizeSelectedTextarea() {
+    if (!selectedBoxId) return;
+    var ta = document.querySelector('.pop[data-id="'+selectedBoxId+'"] .body');
+    var p = pops.find(function(pp){ return pp.id === selectedBoxId; });
+    if (ta && p) autoGrow(ta, p);
   }
 
   function createPop(x, y) {
-    var p = { id: uid(), x: x, y: y, text: "" };
+    var p = { id: uid(), x: x, y: y, text: "", color:"#000000", size:"small", bold:false, _maxHeight:0 };
     pops.push(p);
     render();
     selectBox(p.id);
   }
 
   function addLink(from, to) {
-   if (!from || !to || from === to) return;
-
-   for (var i = 0; i < links.length; i++) {
-     if (links[i].from === from && links[i].to === to) return;
-   }
-
-   links.push({
-     id: uid(),
-     from: from,
-     to: to,
-     label: ""   // 👈 etichetta del connettore
-   });
-}
+    if (!from || !to || from === to) return;
+    for (var i=0;i<links.length;i++) {
+      if (links[i].from === from && links[i].to === to) return;
+    }
+    links.push({ id: uid(), from: from, to: to, end: "arrow", shape: "straight" });
+  }
 
   function deleteSelected() {
     if (selectedLinkId) {
@@ -465,62 +476,116 @@
       setStatus("Box eliminato.");
       return;
     }
-    setStatus("Nessuna selezione.");
   }
 
-    function getPopBoxInBoardCoords(id) {
-    var el = document.querySelector('.pop[data-id="'+id+'"]');
+  function getPopById(id) {
+    for (var i=0;i<pops.length;i++){
+      if (pops[i].id === id) return pops[i];
+    }
+    return null;
+  }
+
+  function updateTextControls(){
+    var p = selectedBoxId ? getPopById(selectedBoxId) : null;
+    btnSmaller.disabled = !p;
+    btnBigger.disabled  = !p;
+    btnBold.disabled    = !p;
+    colorPicker.disabled= !p;
+    if (p) {
+      colorPicker.value = p.color || "#000000";
+      btnBold.classList.toggle("active", !!p.bold);
+    } else {
+      btnBold.classList.remove("active");
+    }
+  }
+
+  function applyView(){
+    viewport.style.transform = "translate(" + view.x + "px," + view.y + "px) scale(" + view.s + ")";
+  }
+
+  function screenToWorld(clientX, clientY){
+    var br = board.getBoundingClientRect();
+    var sx = clientX - br.left;
+    var sy = clientY - br.top;
+    return { x: (sx - view.x)/view.s, y: (sy - view.y)/view.s };
+  }
+
+  applyView();
+
+  board.addEventListener("pointerdown", function(e){
+    if (e.button !== 0) return;
+
+    if (moveMode || (!e.target.closest(".pop") && !e.target.closest("textarea"))) {
+      isPanning = true;
+      panStart.x = e.clientX;
+      panStart.y = e.clientY;
+      panViewStart.x = view.x;
+      panViewStart.y = view.y;
+      board.setPointerCapture(e.pointerId);
+      e.preventDefault();
+      return;
+    }
+
+    if (e.target === board || e.target === viewport || e.target === wires){
+      clearSelection();
+    }
+  });
+
+  board.addEventListener("pointermove", function(e){
+    if (!isPanning) return;
+    var dx = e.clientX - panStart.x;
+    var dy = e.clientY - panStart.y;
+    view.x = panViewStart.x + dx;
+    view.y = panViewStart.y + dy;
+    applyView();
+  });
+
+  board.addEventListener("pointerup", function(e){
+    if (isPanning){
+      isPanning = false;
+      board.releasePointerCapture(e.pointerId);
+    }
+  });
+
+  board.addEventListener("dblclick", function(e){
+    if (e.target.closest(".pop") || e.target.closest("textarea")) return;
+    var pos = screenToWorld(e.clientX, e.clientY);
+    createPop(pos.x, pos.y);
+  });
+
+  function getPopBoxInBoardCoords(popId) {
+    var el = viewport.querySelector('.pop[data-id="'+popId+'"]');
     if (!el) return null;
-
-    var r = el.getBoundingClientRect();
-    var br = boardRect();
-
-    // convertiamo da coordinate schermo a coordinate world (prima della transform)
-    var x = (r.left - br.left - camX) / camS;
-    var y = (r.top  - br.top  - camY) / camS;
-
-    var w = r.width  / camS;
-    var h = r.height / camS;
-
-    return {
-      cx: x + w/2, cy: y + h/2,
-      hw: w/2, hh: h/2
-    };
+    var rect = el.getBoundingClientRect();
+    var br = board.getBoundingClientRect();
+    var x = rect.left - br.left;
+    var y = rect.top  - br.top;
+    var w = rect.width;
+    var h = rect.height;
+    return { x:x, y:y, w:w, h:h, cx:x+w/2, cy:y+h/2, hw:w/2, hh:h/2 };
   }
+
+  var NS = "http://www.w3.org/2000/svg";
 
   function edgePoint(cx, cy, hw, hh, dx, dy) {
-    if (dx === 0 && dy === 0) return { x: cx, y: cy };
-    var tx = Math.abs(dx) / hw;
-    var ty = Math.abs(dy) / hh;
-    var t = 1 / Math.max(tx, ty);
-    return { x: cx + dx * t, y: cy + dy * t };
+    if (dx === 0 && dy === 0) return { x:cx, y:cy };
+    var adx = Math.abs(dx);
+    var ady = Math.abs(dy);
+    var scale;
+    if (adx*hh > ady*hw) {
+      scale = hw / adx;
+    } else {
+      scale = hh / ady;
+    }
+    return { x:cx + dx*scale, y:cy + dy*scale };
   }
 
-  function renderLinks() {
-    while (svg.firstChild) svg.removeChild(svg.firstChild);
+  function renderLinks(){
+    while (wires.firstChild && wires.firstChild.tagName !== "defs") {
+      wires.removeChild(wires.lastChild);
+    }
 
-    var NS = "http://www.w3.org/2000/svg";
-
-    // defs + freccia
-    var defs = document.createElementNS(NS, "defs");
-    var marker = document.createElementNS(NS, "marker");
-    marker.setAttribute("id", "arrow");
-    marker.setAttribute("viewBox", "0 0 10 10");
-    marker.setAttribute("refX", "9");
-    marker.setAttribute("refY", "5");
-    marker.setAttribute("markerWidth", "7");
-    marker.setAttribute("markerHeight", "7");
-    marker.setAttribute("orient", "auto");
-    marker.setAttribute("markerUnits", "strokeWidth");
-
-    var path = document.createElementNS(NS, "path");
-    path.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
-    path.setAttribute("fill", "rgba(0,0,0,.55)");
-    marker.appendChild(path);
-    defs.appendChild(marker);
-    svg.appendChild(defs);
-
-    links.forEach(function (l) {
+    links.forEach(function(l){
       var A = getPopBoxInBoardCoords(l.from);
       var B = getPopBoxInBoardCoords(l.to);
       if (!A || !B) return;
@@ -531,121 +596,57 @@
       var p1 = edgePoint(A.cx, A.cy, A.hw, A.hh, dx, dy);
       var p2 = edgePoint(B.cx, B.cy, B.hw, B.hh, -dx, -dy);
 
-      // linea
-      var line = document.createElementNS(NS, "line");
-      line.setAttribute("x1", p1.x);
-      line.setAttribute("y1", p1.y);
-      line.setAttribute("x2", p2.x);
-      line.setAttribute("y2", p2.y);
-      line.setAttribute("marker-end", "url(#arrow)");
-      line.classList.add("linkLine");
-      line.dataset.linkid = l.id;
+      var color = "#000000";
+      var toPop = pops.find(function(pp){ return pp.id === l.to; });
+      if (toPop && toPop.color) color = toPop.color;
 
-      if (l.id === selectedLinkId) line.classList.add("selected");
+      var elWire = document.createElementNS(NS, "line");
+      elWire.setAttribute("x1", p1.x);
+      elWire.setAttribute("y1", p1.y);
+      elWire.setAttribute("x2", p2.x);
+      elWire.setAttribute("y2", p2.y);
 
-      line.addEventListener("mousedown", function (e) {
+      elWire.setAttribute("marker-end", "url(#arrow)");
+
+      elWire.classList.add("linkLine");
+      elWire.dataset.linkid = l.id;
+      elWire.style.stroke = color;
+
+      if (l.id === selectedLinkId) elWire.classList.add("selected");
+
+      function handlePointerDown(e){
         e.stopPropagation();
         setLinkMode(false);
         selectLink(l.id);
-        setStatus("Link selezionato.");
-      });
-
-      svg.appendChild(line);
-
-            // ---------- ETICHETTA (solo testo, senza cornice) ----------
-      if (l.label && l.label.trim() !== "") {
-        var txt = document.createElementNS(NS, "text");
-
-        // centro della linea
-        var tx = (p1.x + p2.x) / 2;
-        var ty = (p1.y + p2.y) / 2;
-
-        // un pelo sopra la linea (così non si sovrappone)
-        ty = ty - 8;
-
-        txt.setAttribute("x", tx);
-        txt.setAttribute("y", ty);
-        txt.setAttribute("text-anchor", "middle");
-        txt.setAttribute("dominant-baseline", "middle");
-        txt.setAttribute("fill", "#000");
-        txt.setAttribute("font-size", "13");
-        txt.style.cursor = "pointer";
-        txt.style.pointerEvents = "auto";
-
-        txt.textContent = l.label;
-        txt.dataset.linkid = l.id;
-
-        // click sull'etichetta per modificarla
-        txt.addEventListener("mousedown", function (e) {
-          e.stopPropagation();
-          var id = this.dataset.linkid;
-
-          for (var k = 0; k < links.length; k++) {
-            if (links[k].id === id) {
-              var nuovo = prompt("Etichetta del collegamento:", links[k].label || "");
-              if (nuovo !== null) links[k].label = nuovo;
-              break;
-            }
-          }
-          renderLinks();
-        });
-
-        // --- SFONDO dietro il testo (copre la linea sotto) ---
-        // 1) aggiungo temporaneamente il testo per misurarlo
-        svg.appendChild(txt);
-        var bb = txt.getBBox();
-
-        var padX = 6;
-        var padY = 3;
-
-        var bg = document.createElementNS(NS, "rect");
-        bg.setAttribute("x", bb.x - padX);
-        bg.setAttribute("y", bb.y - padY);
-        bg.setAttribute("width", bb.width + padX * 2);
-        bg.setAttribute("height", bb.height + padY * 2);
-        bg.setAttribute("rx", 4);
-        bg.setAttribute("ry", 4);
-
-        // stesso colore dello sfondo della tua app (nel CSS: --bg:#f6f7fb)
-        // colore di default (schermo)
-        var labelBg = "#f6f7fb";
-
-        // se siamo in stampa, usa bianco
-        if (window.matchMedia && window.matchMedia("print").matches) {
-        labelBg = "#ffffff";
-        }
-
-        bg.setAttribute("fill", labelBg);
-
-        bg.setAttribute("stroke", "none");
-        bg.style.pointerEvents = "none";
-
-        // 2) rimetto ordine: prima bg, poi txt
-        svg.removeChild(txt);
-        svg.appendChild(bg);
-        svg.appendChild(txt);
       }
+
+      elWire.addEventListener("pointerdown", handlePointerDown);
+
+      wires.appendChild(elWire);
     });
   }
 
-  function render() {
-    var old = world.querySelectorAll(".pop");
-    for (var i=0;i<old.length;i++) old[i].remove();
-
-    var ghost = board.querySelector(".ghost");
-    if (ghost) ghost.style.display = pops.length ? "none" : "flex";
-
-    pops.forEach(function (p) {
+  function render(){
+    viewport.innerHTML = "";
+    pops.forEach(function(p){
       var el = document.createElement("div");
       el.className = "pop";
       el.dataset.id = p.id;
       el.style.left = p.x + "px";
       el.style.top  = p.y + "px";
 
+      el.style.borderColor = p.color || "#000000";
+
       el.innerHTML = '<textarea class="body" spellcheck="false"></textarea>';
       var ta = el.querySelector(".body");
       ta.value = p.text || "";
-      autoGrow(ta);
+
+      var fontSizePx = (p.size === "large") ? "20px" : "14px";
+      ta.style.fontSize = fontSizePx;
+      ta.style.fontWeight = p.bold ? "700" : "400";
+      ta.style.color = p.color || "#000000";
+
+      autoGrow(ta, p);
 
       if (p.id === selectedBoxId) el.classList.add("selected");
       if (p.id === linkingFrom) el.classList.add("linking");
@@ -658,318 +659,197 @@
 
       ta.addEventListener("input", function (e) {
         p.text = e.target.value;
-        autoGrow(ta);
+        autoGrow(ta, p);
         renderLinks();
       });
 
-      // click ovunque nel box: se in modalita collega, crea link
       el.addEventListener("click", function () {
         if (linkingFrom && linkingFrom !== p.id) {
-         addLink(linkingFrom, p.id);
-
-         // chiedi subito l'etichetta
-         var last = links[links.length - 1];
-         var t = prompt("Etichetta del collegamento:", "");
-         if (t !== null) last.label = t;
-
-         setLinkMode(false);
-         renderLinks();
-         setStatus("Collegamento creato.");
-
+          addLink(linkingFrom, p.id);
+          setLinkMode(false);
+          renderLinks();
+          setStatus("Collegamento creato.");
         }
       });
 
-      // drag solo fuori textarea
-      var dragging = false, sx=0, sy=0, ox=0, oy=0;
+      var dragging = false;
+      var sx=0, sy=0, ox=0, oy=0;
 
-      el.addEventListener("pointerdown", function (e) {
-      // Su touch spesso e.button non è 0: quindi non blocchiamo
-         if (e.pointerType === "mouse" && e.button !== 0) return;
+      el.addEventListener("pointerdown", function(e){
+        if (e.button !== 0) return;
+        if (!moveMode && e.target && e.target.tagName && e.target.tagName.toLowerCase() === "textarea") return;
 
-       // Se NON siamo in modalita sposta e sto toccando la textarea, non trascinare
-         if (!moveMode && e.target && e.target.tagName && e.target.tagName.toLowerCase() === "textarea") return;
+        e.preventDefault();
+        e.stopPropagation();
 
-         e.preventDefault();     // evita scroll/zoom mentre trascini
-         e.stopPropagation();
+        setLinkMode(false);
+        selectBox(p.id);
 
-         setLinkMode(false);
-         selectBox(p.id);
+        dragging = true;
+        sx = e.clientX; sy = e.clientY;
+        ox = p.x; oy = p.y;
 
-         dragging = true;
-         sx = e.clientX; sy = e.clientY;
-         ox = p.x; oy = p.y;
+        if (el.setPointerCapture) el.setPointerCapture(e.pointerId);
 
-         // cattura il puntatore: fondamentale su mobile
-         if (el.setPointerCapture) el.setPointerCapture(e.pointerId);
+        function onMove(ev) {
+          if (!dragging) return;
+          var dx = (ev.clientX - sx)/view.s;
+          var dy = (ev.clientY - sy)/view.s;
+          p.x = ox + dx;
+          p.y = oy + dy;
+          el.style.left = p.x + "px";
+          el.style.top  = p.y + "px";
+          renderLinks();
+        }
+        function onUp(ev) {
+          dragging = false;
+          if (el.releasePointerCapture) el.releasePointerCapture(ev.pointerId);
+          document.removeEventListener("pointermove", onMove);
+          document.removeEventListener("pointerup", onUp);
+        }
+        document.addEventListener("pointermove", onMove);
+        document.addEventListener("pointerup", onUp);
+      });
 
-         function onMove(ev) {
-           if (!dragging) return;
-           var dx = (ev.clientX - sx) / camS;
-           var dy = (ev.clientY - sy) / camS;
-           var pos = clampToBoard(ox + dx, oy + dy);
-           p.x = pos.x; p.y = pos.y;
-           el.style.left = p.x + "px";
-           el.style.top  = p.y + "px";
-           renderLinks();
-         }
-
-         function onUp(ev) {
-           dragging = false;
-           window.removeEventListener("pointermove", onMove);
-           window.removeEventListener("pointerup", onUp);
-         }
-
-          window.addEventListener("pointermove", onMove, { passive:false });
-          window.addEventListener("pointerup", onUp, { passive:true });
-});
-
-            world.appendChild(el);
+      viewport.appendChild(el);
     });
 
     renderLinks();
+    updateTextControls();
   }
 
-  // ---------- export/import/pdf ----------
-  function getState() {
-    return { version: 1, createdAt: new Date().toISOString(), pops: pops, links: links };
-  }
+  btnNew.addEventListener("click", function(){
+    var center = screenToWorld(board.clientWidth/2, board.clientHeight/2);
+    createPop(center.x, center.y);
+  });
 
-  function downloadBlob(name, blob) {
+  btnMove.addEventListener("click", function(){
+    setMoveMode(!moveMode);
+  });
+
+  btnLink.addEventListener("click", function(){
+    setLinkMode(!linkingFrom);
+  });
+
+  btnDelete.addEventListener("click", function(){
+    deleteSelected();
+  });
+
+  btnExportJson.addEventListener("click", function(){
+    var data = {
+      version:1,
+      pops:pops,
+      links:links
+    };
+    var blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
     var a = document.createElement("a");
-    var url = URL.createObjectURL(blob);
-    a.href = url;
-    a.download = name;
-    document.body.appendChild(a);
+    a.href = URL.createObjectURL(blob);
+    a.download = "mappa-mentale.json";
     a.click();
-    a.remove();
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-  }
+  });
 
-  function exportJSON() {
-    var blob = new Blob([JSON.stringify(getState(), null, 2)], { type: "application/json;charset=utf-8" });
-    var name = "mappa_" + new Date().toISOString().slice(0,19).split(":").join("-") + ".json";
-    downloadBlob(name, blob);
-    setStatus("Esportato JSON.");
-  }
+  btnExportHtml.addEventListener("click", function(){
+    alert("Per ora usa Esporta JSON e poi apri questo file sulla stessa pagina.");
+  });
 
-function exportHTML() {
-  var state = JSON.stringify(getState(), null, 2);
+  btnImport.addEventListener("click", function(){
+    var inp = document.createElement("input");
+    inp.type = "file";
+    inp.accept = ".json,application/json";
+    inp.addEventListener("change", function(){
+      var f = inp.files[0];
+      if (!f) return;
+      var reader = new FileReader();
+      reader.onload = function(ev){
+        try{
+          var data = JSON.parse(ev.target.result);
+          if (data.pops && data.links){
+            pops = data.pops;
+            links = data.links;
+            render();
+            setStatus("Mappa caricata.");
+          }
+        }catch(e){
+          alert("File non valido.");
+        }
+      };
+      reader.readAsText(f);
+    });
+    inp.click();
+  });
 
-  var html =
-    '<!doctype html>' +
-    '<html lang="it">' +
-    '<head>' +
-    '<meta charset="utf-8"/>' +
-    '<meta name="viewport" content="width=device-width, initial-scale=1"/>' +
-    '<title>Mappa esportata</title>' +
-    '</head>' +
-    '<body>' +
-    '<h3>Mappa esportata</h3>' +
-    '<p>Importa questo file nell\'app con il pulsante Importa.</p>' +
-    '<textarea id="popplet_export_data" style="display:none;">' +
-    state +
-    '</textarea>' +
-    '</body>' +
-    '</html>';
-
-  var blob = new Blob([html], { type: "text/html;charset=utf-8" });
-  var name = "mappa_" + new Date().toISOString().slice(0,19).replace(/:/g,'-') + ".html";
-  downloadBlob(name, blob);
-  setStatus("Esportato HTML.");
-}
-  
-function parseImportedText(text) {
-  var t = (text || "").trim();
-
-  // Caso 1: JSON puro
-  if (t.charAt(0) === "{" || t.charAt(0) === "[") {
-    return JSON.parse(t);
-  }
-
-  // Caso 2: HTML esportato (textarea nascosta)
-  var re = /<textarea[^>]*id=["']popplet_export_data["'][^>]*>([\s\S]*?)<\/textarea>/i;
-  var m = text.match(re);
-  if (!m) throw new Error("File non riconosciuto");
-
-  return JSON.parse(m[1]);
-}
-
-  function applyState(state) {
-    if (!state || !state.pops || !state.links) throw new Error("Dati incompleti");
-    pops = state.pops;
-    links = state.links;
-    clearSelections();
-    setLinkMode(false);
+  btnSmaller.addEventListener("click", function(){
+    if (!selectedBoxId) return;
+    var p = getPopById(selectedBoxId);
+    if (!p) return;
+    p.size = "small";
     render();
-    setStatus("Import OK.");
-  }
-
-  function doImport() {
-    fileInput.value = "";
-    fileInput.click();
-  }
-
-  fileInput.addEventListener("change", function (e) {
-    var file = e.target.files && e.target.files[0];
-    if (!file) return;
-    file.text().then(function (text) {
-      var state = parseImportedText(text);
-      applyState(state);
-    }).catch(function (err) {
-      console.error(err);
-      setStatus("Errore import.");
-      alert("Import fallito: usa un file esportato da questa app (JSON o HTML).");
-    });
+    selectBox(p.id);
   });
 
-  function exportPDF() {
-    setStatus("Stampa: scegli Salva come PDF.");
-    window.print();
+  btnBigger.addEventListener("click", function(){
+    if (!selectedBoxId) return;
+    var p = getPopById(selectedBoxId);
+    if (!p) return;
+    p.size = "large";
+    render();
+    selectBox(p.id);
+  });
+
+  btnBold.addEventListener("click", function(){
+    if (!selectedBoxId) return;
+    var p = getPopById(selectedBoxId);
+    if (!p) return;
+    p.bold = !p.bold;
+    var ta = document.querySelector('.pop[data-id="'+p.id+'"] .body');
+    if (ta) ta.style.fontWeight = p.bold ? "700" : "400";
+    updateTextControls();
+    resizeSelectedTextarea();
+  });
+
+  colorPicker.addEventListener("input", function(){
+    if (!selectedBoxId) return;
+    var p = getPopById(selectedBoxId);
+    if (!p) return;
+    p.color = colorPicker.value;
+    render();
+    selectBox(p.id);
+  });
+
+  board.addEventListener("wheel", function(e){
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    var delta = -e.deltaY;
+    var factor = delta > 0 ? 1.1 : 0.9;
+    var mouseBefore = screenToWorld(e.clientX, e.clientY);
+    view.s *= factor;
+    view.s = Math.max(0.35, Math.min(2.8, view.s));
+    var mouseAfter = screenToWorld(e.clientX, e.clientY);
+    view.x += (mouseAfter.x - mouseBefore.x)*view.s;
+    view.y += (mouseAfter.y - mouseBefore.y)*view.s;
+    applyView();
+    renderLinks();
+  }, {passive:false});
+
+  function zoomAt(centerX, centerY, factor){
+    var before = screenToWorld(centerX, centerY);
+    view.s *= factor;
+    view.s = Math.max(0.35, Math.min(2.8, view.s));
+    var after = screenToWorld(centerX, centerY);
+    view.x += (after.x - before.x)*view.s;
+    view.y += (after.y - before.y)*view.s;
+    applyView();
+    renderLinks();
   }
 
-  // ---------- eventi ----------
-  // ---------- PAN + PINCH ZOOM (mobile) ----------
-  var pointers = new Map();
-  var pinchStartDist = 0;
-  var pinchStartS = 1;
-  var pinchStartMid = null;
-  var panStart = null;
-
-  function dist(a,b){
-    var dx = a.x - b.x, dy = a.y - b.y;
-    return Math.sqrt(dx*dx + dy*dy);
-  }
-  function mid(a,b){
-    return { x:(a.x+b.x)/2, y:(a.y+b.y)/2 };
-  }
-
-  board.addEventListener("pointerdown", function(e){
-    // solo sfondo (non un box)
-    if (e.target && e.target.closest && e.target.closest(".pop")) return;
-
-    pointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
-    board.setPointerCapture(e.pointerId);
-
-    if (pointers.size === 1) {
-      panStart = { x:e.clientX, y:e.clientY, camX:camX, camY:camY };
-    } else if (pointers.size === 2) {
-      var arr = Array.from(pointers.values());
-      pinchStartDist = dist(arr[0], arr[1]);
-      pinchStartS = camS;
-      pinchStartMid = mid(arr[0], arr[1]);
-    }
-  }, { passive:false });
-
-  board.addEventListener("pointermove", function(e){
-    if (!pointers.has(e.pointerId)) return;
-    pointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
-
-    if (pointers.size === 1 && panStart) {
-      var p = Array.from(pointers.values())[0];
-      camX = panStart.camX + (p.x - panStart.x);
-      camY = panStart.camY + (p.y - panStart.y);
-      applyCamera();
-      renderLinks();
-    }
-
-    if (pointers.size === 2) {
-      var arr = Array.from(pointers.values());
-      var d = dist(arr[0], arr[1]);
-      if (!pinchStartDist) return;
-
-      var newS = pinchStartS * (d / pinchStartDist);
-      if (newS < 0.25) newS = 0.25;
-      if (newS > 4.0) newS = 4.0;
-
-      // mantieni il punto medio sotto le dita
-      var m = mid(arr[0], arr[1]);
-
-      // coord mondo del mid prima del cambio scala
-      var w0 = screenToWorld(pinchStartMid.x, pinchStartMid.y);
-
-      camS = newS;
-
-      var r = boardRect();
-      camX = m.x - r.left - (w0.x * camS);
-      camY = m.y - r.top  - (w0.y * camS);
-
-      applyCamera();
-      renderLinks();
-    }
-  }, { passive:false });
-
-  board.addEventListener("pointerup", function(e){
-    pointers.delete(e.pointerId);
-    if (pointers.size < 2) pinchStartDist = 0;
-    if (pointers.size === 0) panStart = null;
-  }, { passive:true });
-
-  board.addEventListener("pointercancel", function(e){
-    pointers.delete(e.pointerId);
-    if (pointers.size < 2) pinchStartDist = 0;
-    if (pointers.size === 0) panStart = null;
-  }, { passive:true });
-
-  board.addEventListener("mousedown", function (e) {
-    if (e.target === board) {
-      clearSelections();
-      setLinkMode(false);
-      setStatus("Pronto");
-    }
+  zoomInBtn.addEventListener("click", function(){
+    zoomAt(board.clientWidth/2, board.clientHeight/2, 1.15);
+  });
+  zoomOutBtn.addEventListener("click", function(){
+    zoomAt(board.clientWidth/2, board.clientHeight/2, 1/1.15);
   });
 
-  board.addEventListener("dblclick", function (e) {
-    if (e.target && e.target.closest && e.target.closest(".pop")) return;
-    var w = screenToWorld(e.clientX, e.clientY);
-    var pos = clampToBoard(w.x, w.y);
-    createPop(pos.x, pos.y);
-  });
-
-  window.addEventListener("keydown", function (e) {
-    var key = (e.key || "").toLowerCase();
-    if (key === "delete" || key === "backspace") {
-      var active = document.activeElement;
-      var inEditor = active && active.tagName === "TEXTAREA";
-      if (!inEditor) { e.preventDefault(); deleteSelected(); }
-    }
-    if (key === "l") { linkingFrom ? setLinkMode(false) : setLinkMode(true); }
-    if (key === "escape") setLinkMode(false);
-  });
-
-  // ---------- bottoni ----------
-  btnNew.addEventListener("click", function () {
-  var r = boardRect();
-  var cx = r.left + r.width/2;
-  var cy = r.top  + r.height/2;
-  var w = screenToWorld(cx, cy);
-  createPop(w.x, w.y);
-});
-  
-  btnLink.addEventListener("click", function () { setLinkMode(!linkingFrom); });
-  btnDelete.addEventListener("click", deleteSelected);
-  btnMove.addEventListener("click", function () { setMoveMode(!moveMode); });
-
-  btnPdf.addEventListener("click", exportPDF);
-  btnExportJson.addEventListener("click", exportJSON);
-  btnExportHtml.addEventListener("click", exportHTML);
-  btnImport.addEventListener("click", doImport);
-
-  // ---------- init ----------
-   if (focalTa) {
-  focalTa.addEventListener("input", function(){
-    focalQuestion = this.value;
-    syncFooterFocal();
-  });
-}
-  
   render();
-    if (focalTa) {
-    focalTa.addEventListener("input", function(){
-    focalQuestion = this.value;
-    syncPrintFocal();
-    });
-  }
-  askFocalQuestionAtStart();
   setStatus("Pronto");
 })();
 </script>
